@@ -1,0 +1,46 @@
+<Window x:Class="TaskManager.PcClient.Views.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="任务管理 - 登录" Width="400" Height="382"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="双端互通任务管理系统" FontSize="18" FontWeight="Bold"
+                   HorizontalAlignment="Center" Margin="0,0,0,16"/>
+
+        <TextBlock Grid.Row="1" Text="服务器地址" Margin="0,0,0,4"/>
+        <TextBox Grid.Row="1" Text="{Binding ServerBaseUrl, UpdateSourceTrigger=PropertyChanged}"
+                 Margin="0,18,0,8" Padding="6,4" VerticalContentAlignment="Center"/>
+
+        <TextBlock Grid.Row="2" Text="用户名" Margin="0,0,0,4"/>
+        <TextBox Grid.Row="2" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}"
+                 Margin="0,18,0,8" Padding="6,4" VerticalContentAlignment="Center"/>
+
+        <TextBlock Grid.Row="3" Text="密码" Margin="0,0,0,4"/>
+        <PasswordBox x:Name="PwdBox" Grid.Row="3" PasswordChanged="PwdBox_PasswordChanged"
+                     Margin="0,18,0,8" Padding="6,4" VerticalContentAlignment="Center"/>
+
+        <TextBlock Grid.Row="4" Text="{Binding ErrorMessage}" Foreground="Red"
+                   TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="登 录" Width="110" Margin="0,0,12,0" Padding="0,6"
+                    Command="{Binding LoginCommand}" IsDefault="True"/>
+            <Button Content="注 册" Width="110" Padding="0,6"
+                    Command="{Binding RegisterCommand}"/>
+        </StackPanel>
+
+        <TextBlock Grid.Row="7" Text="离线优先：无网络时可先登录使用过的设备直接操作"
+                   Foreground="Gray" FontSize="11" HorizontalAlignment="Center"/>
+    </Grid>
+</Window>

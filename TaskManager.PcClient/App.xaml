@@ -1,0 +1,10 @@
+<Application x:Class="TaskManager.PcClient.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:TaskManager.PcClient.Converters">
+    <Application.Resources>
+        <converters:StatusToTextConverter x:Key="StatusToText"/>
+        <converters:PriorityToTextConverter x:Key="PriorityToText"/>
+        <converters:UtcToLocalTimeConverter x:Key="UtcToLocal"/>
+    </Application.Resources>
+</Application>

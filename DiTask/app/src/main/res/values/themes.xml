@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- 品牌配色：与 App 图标保持一致（深蓝 + 青绿） -->
+    <style name="Base.Theme.DiTask" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/brand_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">#DCE8FF</item>
+        <item name="colorOnPrimaryContainer">#0A2A6B</item>
+        <item name="colorSecondary">#0EA5A0</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSecondaryContainer">#D5F5F1</item>
+        <item name="colorOnSecondaryContainer">#02504C</item>
+
+        <item name="android:colorBackground">@color/app_background</item>
+        <item name="colorSurface">@color/app_surface</item>
+        <item name="colorOnSurface">@color/app_text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/app_text_secondary</item>
+        <item name="colorSurfaceVariant">#EAF0F8</item>
+        <item name="colorOutline">@color/app_outline</item>
+        <item name="colorOutlineVariant">@color/app_outline_variant</item>
+
+        <!-- 关闭 Material3 色调叠加，避免卡片/弹窗出现偏紫色 -->
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="colorSurfaceContainerLowest">#FFFFFF</item>
+        <item name="colorSurfaceContainerLow">#F8FAFE</item>
+        <item name="colorSurfaceContainer">#F1F5FB</item>
+        <item name="colorSurfaceContainerHigh">#EAF0F8</item>
+        <item name="colorSurfaceContainerHighest">#E3EBF6</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Theme.DiTask" parent="Base.Theme.DiTask" />
+
+    <!-- 深蓝头部上的 Toolbar 主题：菜单/图标使用浅色 -->
+    <style name="ThemeOverlay.DiTask.OnDark" parent="ThemeOverlay.Material3.Dark">
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorOnSurface">@color/on_header_primary</item>
+        <item name="colorOnSurfaceVariant">@color/on_header_secondary</item>
+    </style>
+
+    <style name="ThemeOverlay.DiTask.Popup" parent="ThemeOverlay.Material3.Light">
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="colorSurface">@color/app_surface</item>
+        <item name="colorSurfaceBright">@color/app_surface</item>
+        <item name="colorSurfaceContainerLowest">@color/app_surface</item>
+        <item name="colorSurfaceContainerLow">@color/app_surface</item>
+        <item name="colorSurfaceContainer">@color/app_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/app_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/app_surface</item>
+    </style>
+
+    <style name="TextAppearance.DiTask.HeaderTitle" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textColor">@color/on_header_primary</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="TextAppearance.DiTask.HeaderSubtitle" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">@color/on_header_secondary</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- 头部筛选标签（背景固定为深蓝） -->
+    <style name="Widget.DiTask.Chip.Filter" parent="Widget.Material3.Chip.Filter">
+        <item name="chipCornerRadius">20dp</item>
+        <item name="chipMinHeight">34dp</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="ensureMinTouchTargetSize">false</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="chipSurfaceColor">@android:color/transparent</item>
+        <item name="chipBackgroundColor">@color/chip_on_dark_bg</item>
+        <item name="android:textColor">@color/chip_on_dark_text</item>
+    </style>
+
+    <style name="Widget.DiTask.Button" parent="Widget.Material3.Button">
+        <item name="cornerRadius">14dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+</resources>

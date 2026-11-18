@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户表：密码 bcrypt 哈希存储
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now()) @db.DateTime(3)
+  updatedAt DateTime @default(now()) @db.DateTime(3)
+  tasks     Task[]
+
+  @@map("users")
+}
+
+// 任务表（核心业务表）
+// 注意：updatedAt 不使用 @updatedAt 自动更新——同步时以客户端传入的时间戳为最终数据依据
+// 时间字段使用 DateTime(3) 保留毫秒精度，保证增量同步比对准确
+model Task {
+  id        String    @id
+  userId    String
+  title     String
+  content   String?   @db.Text
+  status    Int       @default(0) // 0 待办、1 进行中、2 已完成
+  priority  Int       @default(0) // 0 普通、1 重要、2 紧急
+  dueTime   DateTime? @db.DateTime(3)
+  isDeleted Boolean   @default(false) // 软删除标记
+  createdAt DateTime  @default(now()) @db.DateTime(3)
+  updatedAt DateTime  @default(now()) @db.DateTime(3)
+  user      User      @relation(fields: [userId], references: [id])
+
+  // 增量同步查询核心索引
+  @@index([userId, updatedAt])
+  @@map("tasks")
+}

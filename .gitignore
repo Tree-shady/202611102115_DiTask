@@ -1,0 +1,44 @@
+# ===== 通用 =====
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# ===== 本地配置 / 凭据 =====
+local.properties
+keystore.properties
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.pem
+*.key
+*.jks
+*.keystore
+
+# ===== Android / Gradle 构建产物 =====
+.gradle/
+.kotlin/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+mapping.txt
+/DiTask/app/debug/
+/DiTask/app/release/
+
+# ===== .NET / Visual Studio 构建与 IDE 产物 =====
+bin/
+obj/
+.vs/
+*.suo
+*.user
+*.vsidx
+*.pdb
+
+# ===== Node =====
+node_modules/

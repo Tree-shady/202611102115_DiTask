@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+    <!-- 显式 64 位：AnyCPU 会让 SDK 推断 RuntimeIdentifier=win-x86，
+         从而把 x86 版 e_sqlite3.dll 复制到输出目录，64 位进程加载时报“不是有效的 Win32 应用程序” -->
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <!-- EF Core 3.1 是最后一个支持 .NET Framework 4.8 的版本，API 与现有代码兼容 -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.32" />
+    <!-- net48 不内置 System.Text.Json，需显式引用 -->
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+    <!-- net48 缺少 record / 可空注解所需的编译器特性类型，由 PolySharp 源码级补齐 -->
+    <PackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- net48 SDK 风格项目不自动引用该程序集，需显式声明 -->
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+</Project>

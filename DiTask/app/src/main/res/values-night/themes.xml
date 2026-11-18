@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Base.Theme.DiTask" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/brand_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">#16305C</item>
+        <item name="colorOnPrimaryContainer">#D7E5FF</item>
+        <item name="colorSecondary">@color/brand_cyan</item>
+        <item name="colorOnSecondary">#04211F</item>
+        <item name="colorSecondaryContainer">#0B3B38</item>
+        <item name="colorOnSecondaryContainer">#B6F2EC</item>
+
+        <item name="android:colorBackground">@color/app_background</item>
+        <item name="colorSurface">@color/app_surface</item>
+        <item name="colorOnSurface">@color/app_text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/app_text_secondary</item>
+        <item name="colorSurfaceVariant">#122438</item>
+        <item name="colorOutline">@color/app_outline</item>
+        <item name="colorOutlineVariant">@color/app_outline_variant</item>
+
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="colorSurfaceContainerLowest">#050E1B</item>
+        <item name="colorSurfaceContainerLow">#0A1728</item>
+        <item name="colorSurfaceContainer">#0E1D31</item>
+        <item name="colorSurfaceContainerHigh">#122438</item>
+        <item name="colorSurfaceContainerHighest">#172B41</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+    <style name="ThemeOverlay.DiTask.Popup" parent="ThemeOverlay.Material3.Dark">
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="colorSurface">@color/app_surface</item>
+        <item name="colorSurfaceBright">@color/app_surface</item>
+        <item name="colorSurfaceContainerLowest">@color/app_surface</item>
+        <item name="colorSurfaceContainerLow">@color/app_surface</item>
+        <item name="colorSurfaceContainer">@color/app_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/app_surface</item>
+        <item name="colorSurfaceContainerHighest">@color/app_surface</item>
+    </style>
+
+</resources>
