@@ -14,6 +14,15 @@ public class TaskSyncDto
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 
+    /// <summary>
+    /// 统一标记为 UTC：SQLite 读出的 DateTime 丢失 Kind（Unspecified），
+    /// 直接序列化会缺少时区后缀，服务端会按自身时区解析导致时间戳偏移。
+    /// </summary>
+    public static DateTime AsUtc(DateTime value)
+        => value.Kind == DateTimeKind.Utc ? value : DateTime.SpecifyKind(value, DateTimeKind.Utc);
+
+    public static DateTime? AsUtc(DateTime? value) => value.HasValue ? AsUtc(value.Value) : null;
+
     public static TaskSyncDto FromEntity(TaskItem t) => new()
     {
         Id = t.Id,
@@ -22,10 +31,10 @@ public class TaskSyncDto
         Content = t.Content,
         Status = t.Status,
         Priority = t.Priority,
-        DueTime = t.DueTime,
+        DueTime = AsUtc(t.DueTime),
         IsDeleted = t.IsDeleted,
-        CreatedAt = t.CreatedAt,
-        UpdatedAt = t.UpdatedAt
+        CreatedAt = AsUtc(t.CreatedAt),
+        UpdatedAt = AsUtc(t.UpdatedAt)
     };
 
     public TaskItem ToEntity() => new()
@@ -36,11 +45,11 @@ public class TaskSyncDto
         Content = Content,
         Status = Status,
         Priority = Priority,
-        DueTime = DueTime,
+        DueTime = AsUtc(DueTime),
         IsDeleted = IsDeleted,
         IsPendingSync = false,
-        CreatedAt = CreatedAt,
-        UpdatedAt = UpdatedAt
+        CreatedAt = AsUtc(CreatedAt),
+        UpdatedAt = AsUtc(UpdatedAt)
     };
 
     /// <summary>用云端数据覆盖本地实体（调用前需已确认云端 UpdatedAt 更新）</summary>
@@ -51,10 +60,10 @@ public class TaskSyncDto
         local.Content = Content;
         local.Status = Status;
         local.Priority = Priority;
-        local.DueTime = DueTime;
+        local.DueTime = AsUtc(DueTime);
         local.IsDeleted = IsDeleted;
-        local.CreatedAt = CreatedAt;
-        local.UpdatedAt = UpdatedAt;
+        local.CreatedAt = AsUtc(CreatedAt);
+        local.UpdatedAt = AsUtc(UpdatedAt);
         local.IsPendingSync = false;
     }
 }

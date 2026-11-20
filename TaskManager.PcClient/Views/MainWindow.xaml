@@ -15,6 +15,7 @@
                 <Button Content="删除" Margin="0,0,8,0" Padding="12,4" Command="{Binding DeleteTaskCommand}"/>
                 <Button Content="立即同步" Margin="0,0,8,0" Padding="12,4" Command="{Binding SyncCommand}"/>
                 <Button Content="回收站" Margin="0,0,8,0" Padding="12,4" Command="{Binding OpenRecycleBinCommand}"/>
+                <Button Content="服务器设置" Margin="0,0,8,0" Padding="12,4" Click="ServerSettingsButton_Click"/>
                 <Button Content="退出登录" Padding="12,4" Command="{Binding LogoutCommand}"/>
             </StackPanel>
         </Border>

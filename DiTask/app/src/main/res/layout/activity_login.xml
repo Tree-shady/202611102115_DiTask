@@ -93,11 +93,34 @@
                     android:textColor="?attr/colorOnSurfaceVariant" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/inputUsernameLayout"
+                    android:id="@+id/inputServerLayout"
                     style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="22dp"
+                    android:hint="@string/server_hint"
+                    app:boxCornerRadiusBottomEnd="14dp"
+                    app:boxCornerRadiusBottomStart="14dp"
+                    app:boxCornerRadiusTopEnd="14dp"
+                    app:boxCornerRadiusTopStart="14dp"
+                    app:helperText="@string/server_helper"
+                    app:startIconDrawable="@drawable/ic_lock">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inputServer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionNext"
+                        android:inputType="textUri"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputUsernameLayout"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
                     android:hint="@string/username_hint"
                     app:boxCornerRadiusBottomEnd="14dp"
                     app:boxCornerRadiusBottomStart="14dp"

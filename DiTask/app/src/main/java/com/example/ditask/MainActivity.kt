@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +16,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import com.example.ditask.data.ServerSettings
 import com.example.ditask.data.Session
 import com.example.ditask.data.SessionStore
 import com.example.ditask.data.Task
@@ -26,6 +28,7 @@ import com.example.ditask.network.NetworkApiException
 import com.example.ditask.network.RealTaskApi
 import com.example.ditask.network.UnauthorizedApiException
 import com.example.ditask.sync.SyncService
+import com.example.ditask.ui.ServerSettingsDialog
 import com.example.ditask.ui.TaskAdapter
 import com.example.ditask.ui.TaskEditorDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -98,6 +101,10 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.action_sync -> {
                     requestSync(manual = true)
+                    true
+                }
+                R.id.action_server -> {
+                    openServerSettings()
                     true
                 }
                 R.id.action_logout -> {
@@ -217,6 +224,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             .show()
+    }
+
+    private fun openServerSettings() {
+        ServerSettingsDialog.show(this, ServerSettings.baseUrl) { url ->
+            if (url == ServerSettings.baseUrl) return@show
+            ServerSettings.save(this, url)
+            // 旧令牌在新服务器上无效，清除会话并回到登录页
+            syncJob?.cancel()
+            SessionStore.clear(this)
+            Toast.makeText(this, R.string.server_changed, Toast.LENGTH_LONG).show()
+            openLogin()
+        }
     }
 
     private fun isOfflineTestAccount(): Boolean = session.userId == MockAuthApi.MOCK_USER_ID

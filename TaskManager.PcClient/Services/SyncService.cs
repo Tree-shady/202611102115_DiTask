@@ -59,7 +59,7 @@ public class SyncService
                 // 也防止回收站中已本机彻底清除的任务被重新拉回
                 if (!dto.IsDeleted) db.Tasks.Add(dto.ToEntity());
             }
-            else if (dto.UpdatedAt.ToUniversalTime() > local.UpdatedAt.ToUniversalTime())
+            else if (TaskSyncDto.AsUtc(dto.UpdatedAt) > TaskSyncDto.AsUtc(local.UpdatedAt))
             {
                 dto.ApplyTo(local);
             }

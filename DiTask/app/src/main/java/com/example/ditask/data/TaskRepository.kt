@@ -156,6 +156,13 @@ class TaskRepository(
         }
     }
 
+    /** 登录后清空该账号游标，强制下一轮同步走全量拉取，避免旧游标漏掉已同步任务 */
+    suspend fun resetSyncCursor(userId: String) = withContext(Dispatchers.IO) {
+        helper.writableDatabase.delete(
+            TaskDbHelper.SYNC_TABLE, "userId = ?", arrayOf(userId)
+        )
+    }
+
     /** 远端合并与游标推进必须在同一事务中完成。 */
     suspend fun mergeRemoteAndSaveCursor(
         userId: String,

@@ -5,6 +5,17 @@ const auth = require("../middleware/auth");
 const router = express.Router();
 router.use(auth);
 
+// 旧版 PC 客户端上传的时间缺少时区标记（如 2026-11-20T14:51:18.749），
+// 直接 new Date() 会按服务器本地时区解析，导致落库时间整体偏移、其它设备增量拉取漏数据。
+// 不带时区的字符串统一按 UTC 解析。
+function parseClientDate(value, fallback) {
+  if (value === undefined || value === null || value === "") return fallback;
+  const text = String(value);
+  const hasZone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(text);
+  const date = new Date(hasZone ? text : `${text}Z`);
+  return Number.isNaN(date.getTime()) ? fallback : date;
+}
+
 // GET /api/v1/tasks?lastSyncTime=UTC时间
 // 增量拉取：返回当前用户晚于 lastSyncTime 的所有新增/修改/删除任务（含软删除记录）
 // 不传 lastSyncTime 时返回全量（首次同步）
@@ -43,10 +54,10 @@ router.post("/sync", async (req, res, next) => {
           content: t.content ?? null,
           status: Number.isInteger(t.status) ? t.status : 0,
           priority: Number.isInteger(t.priority) ? t.priority : 0,
-          dueTime: t.dueTime ? new Date(t.dueTime) : null,
+          dueTime: t.dueTime ? parseClientDate(t.dueTime, null) : null,
           isDeleted: Boolean(t.isDeleted),
-          createdAt: t.createdAt ? new Date(t.createdAt) : new Date(),
-          updatedAt: t.updatedAt ? new Date(t.updatedAt) : new Date(),
+          createdAt: parseClientDate(t.createdAt, new Date()),
+          updatedAt: parseClientDate(t.updatedAt, new Date()),
         };
         return prisma.task.upsert({
           where: { id: String(t.id) },

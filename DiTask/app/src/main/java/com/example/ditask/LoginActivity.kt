@@ -15,9 +15,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.ditask.data.ServerSettings
 import com.example.ditask.data.SessionStore
 import com.example.ditask.data.TaskRepository
 import com.example.ditask.databinding.ActivityLoginBinding
+import com.example.ditask.network.ApiClient
 import com.example.ditask.network.AuthApi
 import com.example.ditask.network.LoginResult
 import com.example.ditask.network.MockAuthApi
@@ -30,7 +32,6 @@ import kotlinx.coroutines.launch
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private val realAuthApi: AuthApi = RealAuthApi()
     private val mockAuthApi: AuthApi = MockAuthApi()
     private val repository by lazy { TaskRepository(this) }
     private var isRegisterMode = false
@@ -87,6 +88,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.btnLogin.setOnClickListener { authenticate() }
+        binding.inputServer.setText(ServerSettings.baseUrl)
         binding.btnToggleAuthMode.setOnClickListener {
             isRegisterMode = !isRegisterMode
             renderMode()
@@ -119,6 +121,7 @@ class LoginActivity : AppCompatActivity() {
         binding.btnToggleAuthMode.setText(
             if (isRegisterMode) R.string.login_mode_toggle else R.string.register_mode_toggle
         )
+        binding.inputServerLayout.error = null
         binding.inputUsernameLayout.error = null
         binding.inputPasswordLayout.error = null
         setLoading(false)
@@ -127,11 +130,24 @@ class LoginActivity : AppCompatActivity() {
     private fun authenticate() {
         if (!binding.btnLogin.isEnabled) return
 
+        val serverUrl = ServerSettings.normalize(binding.inputServer.text?.toString().orEmpty())
         val username = binding.inputUsername.text?.toString()?.trim().orEmpty()
         val password = binding.inputPassword.text?.toString().orEmpty()
 
+        binding.inputServerLayout.error = null
         binding.inputUsernameLayout.error = null
         binding.inputPasswordLayout.error = null
+
+        if (serverUrl.isEmpty()) {
+            binding.inputServerLayout.error = getString(R.string.server_required)
+            return
+        }
+        if (!ServerSettings.isValid(serverUrl)) {
+            binding.inputServerLayout.error = getString(R.string.server_invalid)
+            return
+        }
+        // 先保存地址，注册失败或网络异常时下次打开仍保留用户输入
+        ServerSettings.save(this, serverUrl)
 
         if (username.isEmpty()) {
             binding.inputUsernameLayout.error = getString(R.string.username_required)
@@ -156,7 +172,12 @@ class LoginActivity : AppCompatActivity() {
         setLoading(true)
         lifecycleScope.launch {
             try {
-                val authApi = if (useOfflineTestAccount) mockAuthApi else realAuthApi
+                val authApi: AuthApi = if (useOfflineTestAccount) {
+                    mockAuthApi
+                } else {
+                    // 每次按最新服务器地址创建，用户修改地址后重试立即生效
+                    RealAuthApi(ApiClient())
+                }
                 val result = if (isRegisterMode) {
                     authApi.register(username, password)
                 } else {
@@ -165,6 +186,8 @@ class LoginActivity : AppCompatActivity() {
                 when (result) {
                     is LoginResult.Success -> {
                         repository.claimLegacyTasks(result.userId)
+                        // 每次登录都作废同步游标，保证换设备后首次同步全量拉取
+                        repository.resetSyncCursor(result.userId)
                         SessionStore.save(
                             this@LoginActivity,
                             username,

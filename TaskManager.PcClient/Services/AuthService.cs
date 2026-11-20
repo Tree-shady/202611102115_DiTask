@@ -20,14 +20,12 @@ public class AuthService
         var token = ApiClient.ExtractToken(doc)
             ?? throw new ApiException("服务器响应中未包含 Token");
         var newUserId = SettingsService.ExtractUserId(token);
-        // 切换账号后同步基准作废，触发该账号的全量拉取
-        if (_settings.Current.UserId != null && newUserId != null && _settings.Current.UserId != newUserId)
-            _settings.Current.LastSyncTime = null;
         _settings.Current.Token = token;
         _settings.Current.Username = username;
         _settings.Current.UserId = newUserId;
-        // 新账号没有历史数据，重置同步基准，触发全量拉取
-        if (isRegister) _settings.Current.LastSyncTime = null;
+        // 每次登录都作废同步基准：保证换设备/重装后首轮同步走全量拉取，
+        // 避免旧游标比云端时间戳新时漏掉已同步的任务
+        _settings.Current.LastSyncTime = null;
         _settings.Save();
     }
 }

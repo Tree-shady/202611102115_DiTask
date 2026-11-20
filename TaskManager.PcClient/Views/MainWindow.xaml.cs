@@ -34,6 +34,25 @@ public partial class MainWindow : Window
             await _vm.SaveTaskAsync(entity, taskId == null);
     }
 
+    /// <summary>在应用内修改服务器地址；地址变更后旧登录态失效，提示重新登录</summary>
+    private void ServerSettingsButton_Click(object sender, RoutedEventArgs e)
+    {
+        var previous = (_settings.Current.ServerBaseUrl ?? string.Empty).TrimEnd('/');
+        var dialog = new ServerSettingsWindow(_settings) { Owner = this };
+        if (dialog.ShowDialog() != true || dialog.ServerBaseUrl == previous) return;
+
+        _settings.Current.ServerBaseUrl = dialog.ServerBaseUrl;
+        _settings.Save();
+
+        var result = MessageBox.Show(
+            $"服务器地址已更新为：\n{dialog.ServerBaseUrl}\n\n旧的登录状态在新服务器上无效，需要重新登录后生效。是否立即重新登录？",
+            "服务器设置", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (result == MessageBoxResult.Yes)
+            OnRequestLogout("服务器地址已更新，请重新登录");
+        else
+            _vm.StatusMessage = "服务器地址已保存，重新登录后生效";
+    }
+
     private async void OnRequestRecycleBin()
     {
         var dialog = new RecycleBinWindow(_settings) { Owner = this };

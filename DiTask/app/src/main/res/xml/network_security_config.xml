@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 服务器地址可由用户在应用内自行填写，通常是局域网内的明文 HTTP 地址，
+     因此放行明文流量；如需强制 HTTPS，可将 cleartextTrafficPermitted 改为 false。 -->
 <network-security-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">10.0.2.2</domain>
-    </domain-config>
+    <base-config cleartextTrafficPermitted="true" />
 </network-security-config>

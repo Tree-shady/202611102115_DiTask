@@ -2,7 +2,24 @@
 
 ## Context
 
-DiTask Android 当前使用 Mock 登录，任务仅保存于本机 SQLite；`isPendingSync` 已预留但尚无网络同步。此次接入现有 `http://10.0.2.2:3000` 服务端，实现真实登录、注册和增量同步，与 PC 客户端保持相同接口及“较新 `updatedAt` 覆盖”的规则，同时继续支持离线新增、编辑、状态切换和软删除。
+DiTask Android 当前使用 Mock 登录，任务仅保存于本机 SQLite；`isPendingSync` 已预留但尚无网络同步。此次接入服务端地址可本地配置的服务端（默认值为模拟器占位地址，不含真实内网信息），实现真实登录、注册和增量同步，与 PC 客户端保持相同接口及“较新 `updatedAt` 覆盖”的规则，同时继续支持离线新增、编辑、状态切换和软删除。
+
+## 本地配置服务器地址
+
+构建时按以下优先级读取 `DITASK_SERVER_URL`（键名固定）：
+
+1. `DiTask/local.properties`（推荐；该文件已被 `.gitignore` 忽略，不会提交）：
+
+   ```properties
+   DITASK_SERVER_URL=http://your-server-host:3000
+   ```
+
+2. Gradle 属性：`~/.gradle/gradle.properties` 中的 `DITASK_SERVER_URL=...`，或命令行 `-PDITASK_SERVER_URL=...`
+3. 环境变量：`ORG_GRADLE_PROJECT_DITASK_SERVER_URL`
+
+未配置时使用默认值 `http://10.0.2.2:3000`（Android 模拟器访问宿主机的别名），无需任何本地配置即可编译并在模拟器运行。
+
+该值在构建期写入 `BuildConfig.SERVER_BASE_URL`，运行时代码统一从 `ApiClient.DEFAULT_BASE_URL` 读取。若改用其它明文 HTTP 主机，需同步在 `res/xml/network_security_config.xml` 中放行该主机（仓库文件只保留默认占位地址，不要提交真实内网信息），或改用 HTTPS。
 
 本期不修改服务端和 PC 接口，不引入 Room、Retrofit、Hilt、WorkManager 等新架构。
 
@@ -10,10 +27,10 @@ DiTask Android 当前使用 Mock 登录，任务仅保存于本机 SQLite；`isP
 
 ### 1. 接入网络权限与最小 HTTP 层
 
-- 在 `AndroidManifest.xml` 增加 `INTERNET` 权限，并通过定向 `networkSecurityConfig` 仅允许示例服务器 `10.0.2.2` 使用 HTTP，不全局放开明文流量。
+- 在 `AndroidManifest.xml` 增加 `INTERNET` 权限，并通过定向 `networkSecurityConfig` 仅允许与默认基址匹配的本机调试地址使用 HTTP，不全局放开明文流量；真实内网地址不写入仓库文件。
 - 在 `network` 包新增轻量 `ApiClient`：基于 `HttpURLConnection` + `org.json`，统一处理 UTF-8 JSON、Bearer Token、超时、HTTP 错误和服务端 `{message}`。
 - 区分网络失败、401 未授权和其他 API 错误；网络失败不得清除本地会话或任务。
-- 服务端地址集中配置为 `http://10.0.2.2:3000`，API 路径复用现有 `/api/v1` 契约。
+- 服务端地址在构建期由本地配置注入 `BuildConfig.SERVER_BASE_URL`（键名见上文「本地配置服务器地址」），默认值为模拟器占位地址，API 路径复用现有 `/api/v1` 契约。
 - 备份规则排除保存 JWT 的 `session.xml`，避免令牌随系统备份外带。
 
 ### 2. 真实登录与注册
